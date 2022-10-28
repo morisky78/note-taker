@@ -13,12 +13,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.get('/notes', (req, res)=> {
-    // res.send('this is note html page');
     res.sendFile(path.join(__dirname, "./public/notes.html"))
 })
 
 app.get('/api/notes', (req, res)=>{
-    // res.send('this shold read the db.json and return all saved notes as json');
     fs.readFile("./db/db.json", "utf-8", (err,data)=> {
         if(err) {
             console.log(err);
@@ -27,7 +25,6 @@ app.get('/api/notes', (req, res)=>{
                 err:err
             })
         } else{
-            // console.log(data)
             const dataArr = JSON.parse(data);
             res.json(dataArr)
         }
@@ -67,19 +64,30 @@ app.delete('/api/notes/:id', (req, res)=>{
             })
         } else{
             const dataArr = JSON.parse(data);
-            console.log("****")
-            console.log(dataArr);
-            console.log(req.params.id);
-            for (let i = 0; i < dataArr.length; i++) {
-                const note = dataArr[i];
-                if (note.id == req.params.id) {
-                    console.log(note);
-                    return res.json('note found')
-                }  
+            // console.log("****")
+            // console.log(dataArr);
+            // console.log(req.params.id);
+            
+            const newDataArr = dataArr.filter((noteObj) => noteObj.id !== req.params.id)
+            console.log(newDataArr);
+            if ( dataArr.length === newDataArr.length){
+                res.status(404).json({
+                        msg:"Delete request fail: note with the id is not found"
+                    })
+            } else {
+                fs.writeFile("./db/db.json", JSON.stringify(newDataArr, null, 4), (err,data)=>{
+                    if(err){
+                        console.log(err);
+                        res.status(500).json({
+                            msg:"Error: Internal Server Error",
+                            err:err
+                        })
+                    } else{
+                        res.send('Delete request success: note found and deleted')
+                    }
+                })
             }
-            res.status(404).json({
-                msg:"note not found"
-            })
+
         }
     })
 })
@@ -95,11 +103,8 @@ app.post('/api/notes', (req, res)=>{
             })
         } else {
             const dataArr = JSON.parse(data);
-            console.log("====");
-            console.log(req.body);
-            
+        
             req.body.id=uniqid();
-
             dataArr.push(req.body);
 
             fs.writeFile("./db/db.json", JSON.stringify(dataArr, null, 4), (err,data)=>{
