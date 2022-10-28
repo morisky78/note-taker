@@ -39,5 +39,15 @@
         "title": "give an id for a text",
         "text": "let's see",
         "id": "6230b11b-577d-496f-bf8b-a7a1a62837da"
+    },
+    {
+        "title": "one last note to post",
+        "text": "hello",
+        "id": "8ef6df1d-02dd-4e09-b499-5b6d91591265"
+    },
+    {
+        "title": "uniq id changed",
+        "text": "works?",
+        "id": "5xavcxp68l9s7bl1m"
     }
 ]

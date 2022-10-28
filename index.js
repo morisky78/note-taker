@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { v4: uuidv4 } = require('uuid');
+var uniqid = require('uniqid'); 
 
 const app = express();
 const path = require("path");
@@ -44,7 +44,6 @@ app.get('/api/notes/:id', (req, res)=>{
             })
         } else{
             const dataArr = JSON.parse(data);
-            console.log(req.params.id);
             for (let i = 0; i < dataArr.length; i++) {
                 const note = dataArr[i];
                 if (note.id == req.params.id) {
@@ -58,7 +57,32 @@ app.get('/api/notes/:id', (req, res)=>{
     })
 })
 
-
+app.delete('/api/notes/:id', (req, res)=>{
+    fs.readFile("./db/db.json", "utf-8", (err,data)=>{
+        if(err) {
+            console.log(err);
+            res.status(500).json({
+                msg:"Error: Internal Server Error",
+                err:err
+            })
+        } else{
+            const dataArr = JSON.parse(data);
+            console.log("****")
+            console.log(dataArr);
+            console.log(req.params.id);
+            for (let i = 0; i < dataArr.length; i++) {
+                const note = dataArr[i];
+                if (note.id == req.params.id) {
+                    console.log(note);
+                    return res.json('note found')
+                }  
+            }
+            res.status(404).json({
+                msg:"note not found"
+            })
+        }
+    })
+})
 
 app.post('/api/notes', (req, res)=>{
     // res.send('this will receive a new note to save on the request body, add it to the db.json file, then return to the new note to the client. ')
@@ -74,8 +98,7 @@ app.post('/api/notes', (req, res)=>{
             console.log("====");
             console.log(req.body);
             
-            const newNote = req.body;
-            newNote.id=uuidv4();
+            req.body.id=uniqid();
 
             dataArr.push(req.body);
 
