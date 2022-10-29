@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.get('/notes', (req, res)=> {
-    res.sendFile(path.join(__dirname, "./views/notes.html"))
+    res.sendFile(path.join(__dirname, "./public/notes.html"))
 })
 
 // get all notes from db
@@ -131,7 +131,7 @@ app.post('/api/notes', (req, res)=>{
 
 // every other request will direct to the home page
 app.get('*', (req, res)=>{
-    res.sendFile(path.join(__dirname, "./views/index.html"))
+    res.sendFile(path.join(__dirname, "./public/index.html"))
 })
 
 
